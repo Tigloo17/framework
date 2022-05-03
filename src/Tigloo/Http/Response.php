@@ -35,9 +35,12 @@ class Response extends GuzzleHttpResponse implements ResponseInterface
             $response = $response->withHeader('Content-Language', 'fr-FR');
         }
 
+        if (! $response->hasHeader('Cache-Control')) {
+            $response = $response->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+        }
+        
         $response = $response->withHeader('Last-Modified', gmdate(DATE_RFC7231));
         $response = $response->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
-        $response = $response->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
         
         return $response;
     }
