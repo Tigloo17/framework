@@ -30,5 +30,11 @@
         "ext-gd": "",
         "ext-json": "",
         "ext-pdo": ""
+    },
+
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
     }
 }
