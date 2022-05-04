@@ -14,6 +14,7 @@ final class Router implements RouterInterface
 {
     private $routes;
     private $names = [];
+    private $regexRoute = '`\[([^:\]]*+)(?::([^:\]]*+))?\](\?|)`';
     private $regex = [
         'i'  => '[0-9]++',
     ];
@@ -36,7 +37,7 @@ final class Router implements RouterInterface
             }
 
             if (isset($this->names[$name])) {
-                throw new RuntimeException(sprintf('Impossible de redéclarer la route %s', $name));
+                throw new RuntimeException(sprintf('Impossible de redéclarer la route %s', $name), 500);
             }
             $this->names[$name] = $route->getPattern();
         }
@@ -80,9 +81,29 @@ final class Router implements RouterInterface
         return null; 
     }
 
+    public function generate(string $name, array $parameters = [])
+    {
+        if (! isset($this->names[$name])) {
+            throw new RuntimeException(sprintf('La route %s n\'existe pas!', $name), 500);
+        }
+
+        $route = $this->names[$name];
+        if (preg_match_all($this->regexRoute, $route, $matches, PREG_SET_ORDER)) {
+            foreach($matches as $match) {
+                list($block, $type, $param, $optional) = $match;
+                if (isset($parameters[$param])) {
+                    $route = str_replace($block, (array_key_exists($param, $parameters)) ? $parameters[$param] : '', $route);
+                } else {
+                    $route = str_replace($block, '', $route);
+                } 
+            }
+        }
+        return $route;
+    }
+
     private function compile($route)
     {
-        if (preg_match_all('`\[([^:\]]*+)(?::([^:\]]*+))?\](\?|)`', $route, $matches, PREG_SET_ORDER)) {
+        if (preg_match_all($this->regexRoute, $route, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 list($block, $type, $name, $optional) = $match;
 

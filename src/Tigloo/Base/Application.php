@@ -11,7 +11,6 @@ use Tigloo\Interfaces\ServiceProviderInterface;
 class Application extends Container
 {
     const VERSION = '1.0';
-    private static $_ENVIRONMENT;
 
     private $booted = false;
     protected $providers = [];
@@ -20,11 +19,6 @@ class Application extends Container
     public static function version()
     {
         return static::VERSION;
-    }
-
-    public static function env()
-    {
-        return static::$_ENVIRONMENT;
     }
     
     public function __construct(string $pathname)
@@ -55,10 +49,11 @@ class Application extends Container
 
     public function run(): void
     {
-        static::$_ENVIRONMENT = (new FileLoader($this['path.env']))->load()->outputCollection();
+        if (file_exists($this['path.env'])) {
+            $this['environments'] = (new FileLoader($this['path.env']))->load()->outputCollection();
+        }
         $response = $this->handler();
         $response->send();
-        //$this['httpKernel']->terminate($response);
     }
 
     protected function handler()

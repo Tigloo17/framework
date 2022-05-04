@@ -22,17 +22,11 @@ final class TwigExtension extends AbstractExtension
     {
         return [
             new TwigFunction('Route', [$this, 'routeGenerate']),
-            new TwigFunction('Assets', [$this, 'assets'])
         ];
     }
 
     public function routeGenerate(string $name, array $attributes = [])
     {
-        return 'route';
-    }
-
-    public function assets(string $file)
-    {
-        return 'asset';
+        return $this->app['routes']->generate($name, $attributes);
     }
 }
