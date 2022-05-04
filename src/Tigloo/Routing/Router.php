@@ -16,7 +16,11 @@ final class Router implements RouterInterface
     private $names = [];
     private $regexRoute = '`\[([^:\]]*+)(?::([^:\]]*+))?\](\?|)`';
     private $regex = [
-        'i'  => '[0-9]++',
+        'num' => '[0-9]++',
+        'alpha' => '[a-zA-Z\-]++',
+        'alphanum' => '[0-9A-Za-z\-]++',
+        '*' => '.+?',
+        '' => '[^/\.]++'
     ];
 
     public function __construct(string $fileRoutes) 
