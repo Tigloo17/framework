@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-/**
- * @source https://github.com/silexphp/Pimple/blob/main/src/Pimple/Container.php
- */
+
 namespace Tigloo\Container;
 
 use Psr\Container\ContainerExceptionInterface;
@@ -41,7 +39,7 @@ class Container implements ContainerInterface, Countable, ArrayAccess
     }
 
     //#ReturnTypeWillChange
-    public function offsetExists($id)
+    public function offsetExists($id): bool
     {
         return isset($this->_aliases[$id]);
     }
@@ -76,14 +74,14 @@ class Container implements ContainerInterface, Countable, ArrayAccess
     }
 
     //#ReturnTypeWillChange
-    public function offsetSet($id, $value)
+    public function offsetSet($id, $value): void
     {
         $this->_instances[$id] = $value;
         $this->_aliases[$id] = true;
     }
 
     //#ReturnTypeWillChange
-    public function offsetUnset($id)
+    public function offsetUnset($id): void
     {
         if ($this->offsetExists($id)) {
             unset($this->_aliases[$id], $this->_instances[$id]);
