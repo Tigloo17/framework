@@ -37,7 +37,7 @@ abstract class AbstractController
 
     public function render(string $render, array $parameters = [], ?Response $response = null): Response
     {
-        $twig = $this->container->get('twig')->render($render, $parameters);
+        $twig = $this->app->get('twig')->render($render, $parameters);
         if (is_null($response)) {
             $response = new Response();
         }
