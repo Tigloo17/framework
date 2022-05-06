@@ -6,17 +6,33 @@ namespace Tigloo\Controller;
 
 use GuzzleHttp\Psr7\Utils;
 use Tigloo\Container\Container;
+use Tigloo\Databases\Mysql;
 use Tigloo\Http\Response;
 
 
 abstract class AbstractController
 {
-    private $container;
+    private $app;
 
-    public function setContainer(Container $container): AbstractController
+    public function setContainer(Container $app): AbstractController
     {
-        $this->container = $container;
+        $this->$app = $app;
         return $this;
+    }
+
+    /**
+     * Accès à la connection de la base de donnée via le controller
+     *
+     * @return Mysql|null
+     */
+    public function db(): ?Mysql
+    {
+        if ($this->app->has('db')) {
+            $database = $this->app['db'];
+            $database->connect();
+            return $database;
+        }
+        return null;
     }
 
     public function render(string $render, array $parameters = [], ?Response $response = null): Response
