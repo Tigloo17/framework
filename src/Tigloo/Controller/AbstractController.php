@@ -16,7 +16,7 @@ abstract class AbstractController
 
     public function setContainer(Container $app): AbstractController
     {
-        $this->$app = $app;
+        $this->app = $app;
         return $this;
     }
 
