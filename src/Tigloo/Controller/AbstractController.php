@@ -5,6 +5,7 @@ namespace Tigloo\Controller;
 
 
 use GuzzleHttp\Psr7\Utils;
+use GuzzleHttp\Psr7\MimeType;
 use Tigloo\Container\Container;
 use Tigloo\Databases\Mysql;
 use Tigloo\Http\Response;
@@ -48,6 +49,18 @@ abstract class AbstractController
 
     public function json($data = null, int $statusCode = 200, ?Response $response = null): Response
     {
-        return new Response();
+        if (is_null($response)) {
+            $response = new Response();
+        }
+
+        $response = $response->withStatus($statusCode);
+        $response = $response->withHeader('Content-type', MimeType::fromExtension('json'));
+        $data = json_encode(array_merge(['data' => $data], [
+            'status' => $statusCode,
+            'reasonPhrase' => $response->getReasonPhrase()
+        ]));
+
+        $response = $response->withBody(Utils::streamFor($data));
+        return $response;
     }
 }
