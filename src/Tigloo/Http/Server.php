@@ -8,7 +8,6 @@ use GuzzleHttp\Psr7\CachingStream;
 use GuzzleHttp\Psr7\LazyOpenStream;
 use GuzzleHttp\Psr7\ServerRequest;
 use Tigloo\Interfaces\ControllerInterface;
-use Tigloo\Interfaces\RouterInterface;
 use Tigloo\Interfaces\ServerInterface;
 use Tigloo\Routing\Route;
 
@@ -22,9 +21,8 @@ class Server extends Request implements ServerInterface
     private $uploadedFiles = [];
     private $statusCode = 200;
     private $session;
-    private $route;
 
-    public static function create(RouterInterface $routes): ServerInterface
+    public static function create(): ServerInterface
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $uri = ServerRequest::getUriFromGlobals();
@@ -32,9 +30,8 @@ class Server extends Request implements ServerInterface
         $body = new CachingStream(new LazyOpenStream('php://input', 'r+'));
         $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? str_replace('HTTP/', '', $_SERVER['SERVER_PROTOCOL']) : '1.1';
         $session = Session::create($uri);
-        $route = $routes->match($method, $uri);
 
-        $server = new Static($method, $uri, $headers, $body, $protocol, $_SERVER, $session, $route);
+        $server = new Static($method, $uri, $headers, $body, $protocol, $_SERVER, $session);
 
         return $server
             ->withCookieParams($_COOKIE)
@@ -151,10 +148,5 @@ class Server extends Request implements ServerInterface
     public function getSession(): ?Session
     {
         return $this->session;
-    }
-
-    public function getRoute(): ?Route
-    {
-        return $this->route; 
     }
 }

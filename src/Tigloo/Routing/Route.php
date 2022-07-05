@@ -13,6 +13,7 @@ class Route
     private $action;
     private $default;
     private $params = [];
+    private $middlewares = [];
 
     public function __construct(string $method, string $pattern, $action)
     {
@@ -33,6 +34,16 @@ class Route
     public function withName($name): Route
     {
         $this->name = $name;
+        return $this;
+    }
+
+    public function withMiddlewares($middleware): Route
+    {
+        if (! is_array($middleware)) {
+            $middleware = [$middleware];
+        }
+
+        $this->middlewares = $middleware;
         return $this;
     }
 

@@ -6,6 +6,7 @@ namespace Tigloo\Controller;
 use RuntimeException;
 use Tigloo\Container\Container;
 use Tigloo\Interfaces\ServerInterface;
+use Tigloo\Routing\Route;
 
 class Resolver
 {
@@ -14,9 +15,9 @@ class Resolver
         $this->container = $container;
     }
 
-    public function getController(ServerInterface $request)
+    public function getController(Route $route)
     {
-        $action = $request->getRoute()->getAction();
+        $action = $route->getAction();
         
         if (is_string($action)) {
             if (! strpos($action, '#')) {

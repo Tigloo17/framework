@@ -6,6 +6,7 @@ namespace Tigloo\Base;
 use Tigloo\Container\Container;
 use Tigloo\Interfaces\BootableProviderInterface;
 use Tigloo\Interfaces\ServiceProviderInterface;
+use Tigloo\Interfaces\MiddlewareProviderInterface;
 
 
 class Application extends Container
@@ -52,6 +53,7 @@ class Application extends Container
         if (file_exists($this['path.env'])) {
             $this['environments'] = (new FileLoader($this['path.env']))->load()->outputCollection();
         }
+        
         $response = $this->handler();
         $response->send();
     }
@@ -72,8 +74,12 @@ class Application extends Container
             return;
         }
 
-        $this->booted = true;
+        $this->booted = true; 
         foreach ($this->providers as $provider) {
+            if ($provider instanceof MiddlewareProviderInterface) {
+                $provider->subscribe($this, $this['httpkernel']);
+            }
+            
             if ($provider instanceof BootableProviderInterface) {
                 $provider->boot($this);
             }

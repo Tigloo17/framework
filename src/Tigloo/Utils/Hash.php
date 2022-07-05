@@ -40,4 +40,9 @@ final class Hash {
         $options = $options += $this->options;
         return password_needs_rehash($hash, PASSWORD_BCRYPT, $options);
     }
+
+    public function generateToken(int $length = 16)
+    {
+        return bin2hex(random_bytes($length));
+    }
 }
